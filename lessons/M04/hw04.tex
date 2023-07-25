@@ -1,0 +1,1630 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+
+    \usepackage{iftex}
+    \ifPDFTeX
+        \usepackage[T1]{fontenc}
+        \IfFileExists{alphabeta.sty}{
+              \usepackage{alphabeta}
+          }{
+              \usepackage[mathletters]{ucs}
+              \usepackage[utf8x]{inputenc}
+          }
+    \else
+        \usepackage{fontspec}
+        \usepackage{unicode-math}
+    \fi
+
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage{array}     % table support for pandoc >= 2.11.3
+    \usepackage{calc}      % table minipage width calculation for pandoc >= 2.11.1
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+
+
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{hw04}
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\@namedef{PY@tok@w}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\@namedef{PY@tok@c}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cp}{\def\PY@tc##1{\textcolor[rgb]{0.61,0.40,0.00}{##1}}}
+\@namedef{PY@tok@k}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kt}{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\@namedef{PY@tok@o}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ow}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@nb}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nf}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@ne}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.80,0.25,0.22}{##1}}}
+\@namedef{PY@tok@nv}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@no}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\@namedef{PY@tok@nl}{\def\PY@tc##1{\textcolor[rgb]{0.46,0.46,0.00}{##1}}}
+\@namedef{PY@tok@ni}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@na}{\def\PY@tc##1{\textcolor[rgb]{0.41,0.47,0.13}{##1}}}
+\@namedef{PY@tok@nt}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nd}{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@s}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sd}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@si}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@se}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.36,0.12}{##1}}}
+\@namedef{PY@tok@sr}{\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@ss}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sx}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@m}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@gh}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gu}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gd}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\@namedef{PY@tok@gi}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.52,0.00}{##1}}}
+\@namedef{PY@tok@gr}{\def\PY@tc##1{\textcolor[rgb]{0.89,0.00,0.00}{##1}}}
+\@namedef{PY@tok@ge}{\let\PY@it=\textit}
+\@namedef{PY@tok@gs}{\let\PY@bf=\textbf}
+\@namedef{PY@tok@gp}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@go}{\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@gt}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\@namedef{PY@tok@err}{\def\PY@bc##1{{\setlength{\fboxsep}{\string -\fboxrule}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}}
+\@namedef{PY@tok@kc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kd}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kr}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@bp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@fm}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@vc}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vg}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vi}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vm}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sa}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sb}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sc}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@dl}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s2}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sh}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s1}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@mb}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mf}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mh}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mi}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@il}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mo}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ch}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cm}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cpf}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@c1}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cs}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb.
+    \makeatletter
+        \newbox\Wrappedcontinuationbox
+        \newbox\Wrappedvisiblespacebox
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}}
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}}
+        \newcommand*\Wrappedcontinuationindent {3ex }
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox}
+        % Take advantage of the already applied Pygments mark-up to insert
+        % potential linebreaks for TeX processing.
+        %        {, <, #, %, $, ' and ": go to next line.
+        %        _, }, ^, &, >, - and ~: stay at end of broken line.
+        % Use of \textquotesingle for straight quote.
+        \newcommand*\Wrappedbreaksatspecials {%
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}%
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}%
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}%
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}%
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}%
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}%
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}%
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}%
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}%
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}%
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}%
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}%
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}%
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}%
+        }
+        % Some characters . , ; ? ! / are not pygmentized.
+        % This macro makes them "active" and they will insert potential linebreaks
+        \newcommand*\Wrappedbreaksatpunct {%
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}%
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}%
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}%
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}%
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}%
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}%
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}%
+            \catcode`\.\active
+            \catcode`\,\active
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active
+            \lccode`\~`\~
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \hypertarget{metadata}{%
+\section{Metadata}\label{metadata}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{Course}\KeywordTok{:}\AttributeTok{  DS 5100}
+\FunctionTok{Module}\KeywordTok{:}\AttributeTok{  04 Functions HW}
+\FunctionTok{Title}\KeywordTok{:}\AttributeTok{   Fighting Forest Fires with Functions}
+\FunctionTok{Author}\KeywordTok{:}\AttributeTok{  R.C. Alvarado (adapted)}
+\FunctionTok{Datae}\KeywordTok{:}\AttributeTok{   7 July 2023}
+\end{Highlighting}
+\end{Shaded}
+
+    \hypertarget{student-info}{%
+\section{Student Info}\label{student-info}}
+
+\begin{itemize}
+\tightlist
+\item
+  Name: Lindley Slipetz
+\item
+  Net ID: ddj6tu
+\item
+  URL of this file in GitHub:
+  https://github.com/sliplr19/DS5100-ddj6tu/tree/main/lessons/M04
+\end{itemize}
+
+    \hypertarget{instructions}{%
+\section{Instructions}\label{instructions}}
+
+In your \textbf{private course repo on Rivanna}, write a Jupyter
+notebook running Python that performs the numbered tasks below.
+
+For each task, create one or more code cells to perform the task.
+
+Save your notebook in the \texttt{M04} directory as \texttt{hw04.ipynb}.
+
+Add and commit these files to your repo.
+
+Then push your commits to your repo on GitHib.
+
+Be sure to fill out the \textbf{Student Info} block above.
+
+To submit your homework, save the notebook as a PDF and upload it to
+GradeScope, following the instructions.
+
+\textbf{TOTAL POINTS: 14}
+
+    \hypertarget{overview}{%
+\section{Overview}\label{overview}}
+
+In this homework, you will work with the
+\href{https://archive.ics.uci.edu/ml/datasets/Forest+Fires}{Forest Fires
+Data Set from UCI}.
+
+There is a local copy of these data as a CSV file in the \texttt{HW}
+directory for this module in the course repo.
+
+You will create a group of related functions to process these data.
+
+This notebook will set the table for you by importing and structuring
+the data first.
+
+    \hypertarget{setting-up}{%
+\section{Setting Up}\label{setting-up}}
+
+First, we read in our local copy of the dataset and save it as a list of
+lines.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{1}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{data\PYZus{}file} \PY{o}{=} \PY{n+nb}{open}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{uci\PYZus{}mldb\PYZus{}forestfires.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{r}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{o}{.}\PY{n}{readlines}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Then, we inspect first ten lines, replacing commas with tabs for
+readability.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{for} \PY{n}{row} \PY{o+ow}{in} \PY{n}{data\PYZus{}file}\PY{p}{[}\PY{p}{:}\PY{l+m+mi}{10}\PY{p}{]}\PY{p}{:}
+    \PY{n}{row} \PY{o}{=} \PY{n}{row}\PY{o}{.}\PY{n}{replace}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{,}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}t}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{n}{row}\PY{p}{,} \PY{n}{end}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+X       Y       month   day     FFMC    DMC     DC      ISI     temp    RH
+wind    rain    area
+7       5       mar     fri     86.2    26.2    94.3    5.1     8.2     51
+6.7     0.0     0.0
+7       4       oct     tue     90.6    35.4    669.1   6.7     18.0    33
+0.9     0.0     0.0
+7       4       oct     sat     90.6    43.7    686.9   6.7     14.6    33
+1.3     0.0     0.0
+8       6       mar     fri     91.7    33.3    77.5    9.0     8.3     97
+4.0     0.2     0.0
+8       6       mar     sun     89.3    51.3    102.2   9.6     11.4    99
+1.8     0.0     0.0
+8       6       aug     sun     92.3    85.3    488.0   14.7    22.2    29
+5.4     0.0     0.0
+8       6       aug     mon     92.3    88.9    495.6   8.5     24.1    27
+3.1     0.0     0.0
+8       6       aug     mon     91.5    145.4   608.2   10.7    8.0     86
+2.2     0.0     0.0
+8       6       sep     tue     91.0    129.5   692.6   7.0     13.1    63
+5.4     0.0     0.0
+    \end{Verbatim}
+
+    \hypertarget{convert-csv-into-datafame-like-data-structure}{%
+\subsection{Convert CSV into Datafame-like Data
+Structure}\label{convert-csv-into-datafame-like-data-structure}}
+
+    We use a helper function to convert the data into the form of a
+dataframe-like dictionary.
+
+That is, we convert a list of rows into a dictionary of columns, each
+cast to the appropriate data type.
+
+Later, we will use Pandas and R dataframes to do this work.
+
+    First, we define the data types by inspecting the data and creating a
+dictionary of lambda functions to do our casting.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dtypes} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{i}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{i}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{s}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{s}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{f}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{f}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{f}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{f}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{f}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{i}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{f}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{f}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{f}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\PY{c+c1}{\PYZsh{} dtypes = list(\PYZdq{}iissfffffifff\PYZdq{}) \PYZsh{} We could have done it this way, too}
+
+\PY{n}{caster} \PY{o}{=} \PY{p}{\PYZob{}}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{i}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{k}{lambda} \PY{n}{x}\PY{p}{:} \PY{n+nb}{int}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{p}{,}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{s}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{k}{lambda} \PY{n}{x}\PY{p}{:} \PY{n+nb}{str}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{p}{,}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{f}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{k}{lambda} \PY{n}{x}\PY{p}{:} \PY{n+nb}{float}\PY{p}{(}\PY{n}{x}\PY{p}{)}
+\PY{p}{\PYZcb{}}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Next, we grab the column names from the first row or list.
+
+Note that \texttt{.strip()} is a string function that removes extra
+whitespace from before and after a string.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{cols} \PY{o}{=} \PY{n}{data\PYZus{}file}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{strip}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{split}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{,}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Finally, we iterate through the list of rows and flip them into a
+dictionary of columns.
+
+The key of each dictionary element is the columns name, and the value is
+a list of values with a common data type.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Get the rows, but not the first, and convert them into lists}
+\PY{n}{rows} \PY{o}{=} \PY{p}{[}\PY{n}{line}\PY{o}{.}\PY{n}{strip}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{split}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{,}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{k}{for} \PY{n}{line} \PY{o+ow}{in} \PY{n}{data\PYZus{}file}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{:}\PY{p}{]}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{} Initialize the dataframe by defining a dictionary of lists, with each column name as a key}
+\PY{n}{firedata} \PY{o}{=} \PY{p}{\PYZob{}}\PY{n}{col}\PY{p}{:}\PY{p}{[}\PY{p}{]} \PY{k}{for} \PY{n}{col} \PY{o+ow}{in} \PY{n}{cols}\PY{p}{\PYZcb{}}
+
+\PY{c+c1}{\PYZsh{} Iterate through the rows and convert them to columns }
+\PY{k}{for} \PY{n}{row} \PY{o+ow}{in} \PY{n}{rows}\PY{p}{:}
+    \PY{k}{for} \PY{n}{j}\PY{p}{,} \PY{n}{col} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{row}\PY{p}{)}\PY{p}{:}
+        \PY{n}{firedata}\PY{p}{[}\PY{n}{cols}\PY{p}{[}\PY{n}{j}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{caster}\PY{p}{[}\PY{n}{dtypes}\PY{p}{[}\PY{n}{j}\PY{p}{]}\PY{p}{]}\PY{p}{(}\PY{n}{col}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Test to see if it worked \ldots{}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{firedata}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Y}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{p}{:}\PY{l+m+mi}{5}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+[5, 4, 4, 6, 6]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \hypertarget{working-with-spatial-coordinates-x-y}{%
+\section{\texorpdfstring{Working with spatial coordinates \texttt{X},
+\texttt{Y}}{Working with spatial coordinates X, Y}}\label{working-with-spatial-coordinates-x-y}}
+
+For the first tasks, we grab the first two columns of our table, which
+define the spatial coordinates within the Monteshino park map.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{X}\PY{p}{,} \PY{n}{Y} \PY{o}{=} \PY{n}{firedata}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{X}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{firedata}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Y}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{X}\PY{p}{[}\PY{p}{:}\PY{l+m+mi}{10}\PY{p}{]}\PY{p}{,} \PY{n}{Y}\PY{p}{[}\PY{p}{:}\PY{l+m+mi}{10}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+([7, 7, 7, 8, 8, 8, 8, 8, 8, 7], [5, 4, 4, 6, 6, 6, 6, 6, 6, 5])
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \hypertarget{task-1}{%
+\subsection{Task 1}\label{task-1}}
+
+(2 points)
+
+Write a function called \texttt{coord\_builder()} with these
+requirements:
+
+\begin{itemize}
+\tightlist
+\item
+  Takes two lists, X and Y, as inputs. X and Y must be of equal length.
+\item
+  Returns a list of tuples
+  \texttt{{[}(x1,y1),\ (x2,y2),\ ...,\ (xn,yn){]}} where
+  \texttt{(xi,yi)} are the ordered pairs from X and Y.
+\item
+  Uses the \texttt{zip()} function to create the returned list.
+\item
+  Use a list comprehension to actually build the returned list.
+\item
+  Contains a docstring with short description of the function.
+\end{itemize}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{28}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{coord\PYZus{}builder}\PY{p}{(}\PY{n}{X}\PY{p}{,}\PY{n}{Y}\PY{p}{)}\PY{p}{:}
+    \PY{l+s+sd}{\PYZsq{}\PYZsq{}\PYZsq{}}
+\PY{l+s+sd}{    This is the \PYZdq{}docstring\PYZdq{} of xoord\PYZus{}builder. }
+\PY{l+s+sd}{    }
+\PY{l+s+sd}{    PURPOSE: Given two lists, create a list of the tuples of the }
+\PY{l+s+sd}{    members of the two listws.}
+\PY{l+s+sd}{    }
+\PY{l+s+sd}{    INPUTS}
+\PY{l+s+sd}{    X   list }
+\PY{l+s+sd}{    Y   list}
+\PY{l+s+sd}{    }
+\PY{l+s+sd}{    OUTPUT}
+\PY{l+s+sd}{    list of tuples}
+\PY{l+s+sd}{    \PYZsq{}\PYZsq{}\PYZsq{}}
+    \PY{k}{if}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{X}\PY{p}{)} \PY{o}{!=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{Y}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Error: These lists are not the same length!}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{k}{else}\PY{p}{:}
+        \PY{n}{zipxy} \PY{o}{=} \PY{n+nb}{zip}\PY{p}{(}\PY{n}{X}\PY{p}{,}\PY{n}{Y}\PY{p}{)}
+        \PY{p}{[}\PY{n+nb}{print}\PY{p}{(}\PY{n+nb}{tuple}\PY{p}{(}\PY{n}{z}\PY{p}{)}\PY{p}{)} \PY{k}{for} \PY{n}{z} \PY{o+ow}{in} \PY{n}{zipxy}\PY{p}{]}
+        
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{task-2}{%
+\subsection{Task 2}\label{task-2}}
+
+(1 PT)
+
+Call your \texttt{coord\_builder()} function, passing in \texttt{X} and
+\texttt{Y}.
+
+Then print the first ten tuples.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{30}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{X10} \PY{o}{=} \PY{n}{X}\PY{p}{[}\PY{p}{:}\PY{l+m+mi}{10}\PY{p}{]}
+\PY{n}{Y10} \PY{o}{=} \PY{n}{Y}\PY{p}{[}\PY{p}{:}\PY{l+m+mi}{10}\PY{p}{]}
+\PY{n}{coord\PYZus{}builder}\PY{p}{(}\PY{n}{X10}\PY{p}{,} \PY{n}{Y10}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+(7, 5)
+(7, 4)
+(7, 4)
+(8, 6)
+(8, 6)
+(8, 6)
+(8, 6)
+(8, 6)
+(8, 6)
+(7, 5)
+    \end{Verbatim}
+
+    \hypertarget{working-with-area}{%
+\section{Working with AREA}\label{working-with-area}}
+
+Next, we work the area column of our data.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{47}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{area} \PY{o}{=} \PY{n}{firedata}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{area}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{32}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{area}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{10}\PY{p}{:}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{32}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+[0.0, 0.0, 2.17, 0.43, 0.0, 6.44, 54.29, 11.16, 0.0, 0.0]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \hypertarget{task-3}{%
+\subsection{Task 3}\label{task-3}}
+
+(1 PT)
+
+Write code to print the minimum area and maximum area in a tuple
+\texttt{(min\_value,\ max\_value)}.
+
+Save \texttt{min\_value} and \texttt{max\_value} as floats.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{34}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{min\PYZus{}max}\PY{p}{(}\PY{n}{area}\PY{p}{)}\PY{p}{:}
+    \PY{n}{min\PYZus{}value} \PY{o}{=} \PY{n+nb}{float}\PY{p}{(}\PY{n+nb}{min}\PY{p}{(}\PY{n}{area}\PY{p}{)}\PY{p}{)}
+    \PY{n}{max\PYZus{}value} \PY{o}{=} \PY{n+nb}{float}\PY{p}{(}\PY{n+nb}{max}\PY{p}{(}\PY{n}{area}\PY{p}{)}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{The minimum is }\PY{l+s+si}{\PYZob{}}\PY{n}{min\PYZus{}value}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{. The maximum is }\PY{l+s+si}{\PYZob{}}\PY{n}{max\PYZus{}value}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{.}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{task-4}{%
+\subsection{Task 4}\label{task-4}}
+
+(2 PTS)
+
+Write a lambda function that applies the following function to \(x\):
+
+\begin{quote}
+\(log_{10}(1 + x)\)
+\end{quote}
+
+Return the rounded value to \(2\) decimals.
+
+Assign the function to the variable \texttt{mylog10}.
+
+Then call the lambda function on \texttt{area} and print the last 10
+values.
+
+Hints: * Use the \texttt{log10} function from Python's
+\href{https://docs.python.org/3/library/math.html}{\texttt{math}
+module}. You'll need to import it. * Use a list comprehension to make
+the lambda function a one-liner. * To get the last members of a list,
+used negative offset slicing. See
+\href{https://docs.python.org/3/tutorial/introduction.html\#lists}{the
+Python documentation on lists} for a refresher on slicing.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{38}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{math}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{43}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{mylog10} \PY{o}{=} \PY{k}{lambda} \PY{n}{x}\PY{p}{:} \PY{n+nb}{round}\PY{p}{(}\PY{n}{math}\PY{o}{.}\PY{n}{log10}\PY{p}{(}\PY{l+m+mi}{1}\PY{o}{+}\PY{n}{x}\PY{p}{)}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{51}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{51}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<function \_\_main\_\_.<lambda>(x)>
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{53}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{p}{[}\PY{n+nb}{round}\PY{p}{(}\PY{n}{math}\PY{o}{.}\PY{n}{log10}\PY{p}{(}\PY{l+m+mi}{1}\PY{o}{+}\PY{n}{x}\PY{p}{)}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{)} \PY{k}{for} \PY{n}{x} \PY{o+ow}{in} \PY{n}{area}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{10}\PY{p}{:}\PY{p}{]}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{53}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+[0.0, 0.0, 0.5, 0.16, 0.0, 0.87, 1.74, 1.08, 0.0, 0.0]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \hypertarget{working-with-month}{%
+\section{Working with MONTH}\label{working-with-month}}
+
+The month column contains months of the year in abbreviated form ---
+\texttt{jan} to \texttt{dec}.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{57}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{month} \PY{o}{=} \PY{n}{firedata}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{month}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{19}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{month}\PY{p}{[}\PY{p}{:}\PY{l+m+mi}{10}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{19}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+['mar', 'oct', 'oct', 'mar', 'mar', 'aug', 'aug', 'aug', 'sep', 'sep']
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \hypertarget{task-5}{%
+\subsection{Task 5}\label{task-5}}
+
+(1 PT)
+
+Create a function called \texttt{get\_uniques()} that extracts the
+unique values from a list. * Do not use \texttt{set()} but instead use a
+\textbf{dictionary comprehension} to capture the unique names. * Hint:
+They keys in a dictionary are unique. * Hint: You do not need to count
+how many times a name appears in the source list.
+
+Then function should optionally return the list as sorted in ascending
+order.
+
+Then apply it to the \texttt{month} column of our data with sorting
+turned on.
+
+Then print the unique months.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{92}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{get\PYZus{}uniques}\PY{p}{(}\PY{n}{ulist}\PY{p}{)}\PY{p}{:}
+    \PY{n}{uniquelist} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+    \PY{p}{[}\PY{n}{uniquelist}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{x}\PY{p}{)} \PY{k}{for} \PY{n}{x} \PY{o+ow}{in} \PY{n}{ulist} \PY{k}{if} \PY{o+ow}{not} \PY{n}{x} \PY{o+ow}{in} \PY{n}{uniquelist}\PY{p}{]}
+    \PY{k}{return}\PY{p}{(}\PY{n}{uniquelist}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{93}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{get\PYZus{}uniques}\PY{p}{(}\PY{n}{month}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{93}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+['mar',
+ 'oct',
+ 'aug',
+ 'sep',
+ 'apr',
+ 'jun',
+ 'jul',
+ 'feb',
+ 'jan',
+ 'dec',
+ 'may',
+ 'nov']
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \hypertarget{task-6}{%
+\subsection{Task 6}\label{task-6}}
+
+(1 PT)
+
+Write a lambda function called \texttt{get\_month\_for\_letter} that
+uses a list comprehension to select all months starting with a given
+letter from the list of unique month names you just crreated.
+
+The function should assume that the list of unique month names exists in
+the global context.
+
+The returned list should contain uppercase strings.
+
+Run and print the result with \texttt{a} as the paramter.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{106}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{get\PYZus{}month\PYZus{}for\PYZus{}letter}\PY{p}{(}\PY{n}{months}\PY{p}{,} \PY{n}{letter}\PY{p}{)}\PY{p}{:}
+    \PY{k}{return} \PY{p}{[}\PY{n}{x}\PY{o}{.}\PY{n}{upper}\PY{p}{(}\PY{p}{)} \PY{k}{for} \PY{n}{x} \PY{o+ow}{in} \PY{n}{months} \PY{k}{if} \PY{n}{x}\PY{p}{[}\PY{p}{:}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{==} \PY{n}{letter}\PY{p}{]}
+    
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{working-with-dmc}{%
+\section{Working with DMC}\label{working-with-dmc}}
+
+DMC - DMC index from the FWI system: 1.1 to 291.3
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{109}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dmc} \PY{o}{=} \PY{n}{firedata}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{DMC}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{110}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dmc}\PY{p}{[}\PY{p}{:}\PY{l+m+mi}{10}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{110}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+[26.2, 35.4, 43.7, 33.3, 51.3, 85.3, 88.9, 145.4, 129.5, 88.0]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \hypertarget{task-7}{%
+\subsection{Task 7}\label{task-7}}
+
+(2 PTS)
+
+Write a function called \texttt{bandpass\_filter()} with these
+requirements:
+
+\begin{itemize}
+\tightlist
+\item
+  Takes three inputs:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    A list of numbers \texttt{num\_list}.
+  \item
+    An integer serving as a lower bound \texttt{lower\_bound}.
+  \item
+    An integer serving as an upper bound \texttt{upper\_bound}.
+  \end{itemize}
+\item
+  Returns a new array containing only the values from the original array
+  which are greater than \texttt{lower\_bound} and less than
+  \texttt{upper\_bound}.
+\end{itemize}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{111}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{bandpass\PYZus{}filter}\PY{p}{(}\PY{n}{num\PYZus{}list}\PY{p}{,} \PY{n}{lower\PYZus{}bound}\PY{p}{,} \PY{n}{upper\PYZus{}bound}\PY{p}{)}\PY{p}{:}
+    \PY{k}{return} \PY{p}{[}\PY{n}{x} \PY{k}{for} \PY{n}{x} \PY{o+ow}{in} \PY{n}{num\PYZus{}list} \PY{k}{if} \PY{n}{x} \PY{o}{\PYZgt{}} \PY{n}{lower\PYZus{}bound} \PY{o+ow}{and} \PY{n}{x} \PY{o}{\PYZlt{}} \PY{n}{upper\PYZus{}bound}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{task-8}{%
+\subsection{Task 8}\label{task-8}}
+
+(1 PT)
+
+Call \texttt{bandpass\_filter()} passing \texttt{dmc} as the list, with
+\texttt{lower\_bound=25} and \texttt{upper\_bound=35}.
+
+Then print the result.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{115}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{bandpass\PYZus{}filter}\PY{p}{(}\PY{n+nb}{list}\PY{p}{(}\PY{n}{dmc}\PY{p}{)}\PY{p}{,}\PY{l+m+mi}{25}\PY{p}{,}\PY{l+m+mi}{35}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{115}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+[26.2,
+ 33.3,
+ 32.8,
+ 27.9,
+ 27.4,
+ 25.7,
+ 33.3,
+ 33.3,
+ 30.7,
+ 33.3,
+ 25.7,
+ 25.7,
+ 25.7,
+ 32.8,
+ 27.2,
+ 27.8,
+ 26.4,
+ 25.4,
+ 25.4,
+ 25.4,
+ 25.4,
+ 26.7,
+ 25.4,
+ 27.5,
+ 28.0,
+ 25.4]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \hypertarget{working-with-ffmc}{%
+\section{Working with FFMC}\label{working-with-ffmc}}
+
+FFMC - FFMC index from the FWI system: 18.7 to 96.20
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{116}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{ffmc} \PY{o}{=} \PY{n}{firedata}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{FFMC}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{117}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{ffmc}\PY{p}{[}\PY{p}{:}\PY{l+m+mi}{10}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{117}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+[86.2, 90.6, 90.6, 91.7, 89.3, 92.3, 92.3, 91.5, 91.0, 92.5]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \hypertarget{task-9}{%
+\subsection{Task 9}\label{task-9}}
+
+(2 PTS)
+
+Write a lambda function \texttt{get\_mean} that computes the mean
+\(\mu\) of a list of numbers. * The mean is jus the sum of a list of
+numeric values divided by the length of that list.
+
+Write another lambda function \texttt{get\_ssd} that computes the
+squared deviation of a number. * The function takes two arguments, a
+number from a given list and the mean of the numbers in that list. * The
+function is meant to be used in a for-loop that iterates through a list.
+* The squared deviation of a list element \(x_i\) is \((x_i - \mu)^2\).
+
+Then write \texttt{get\_sum\_sq\_err()} with these requirements: * Takes
+a numeric list as input. * Computes the mean \(\mu\) of the list using
+\texttt{get\_mean}. * Computes the sum of squared deviations for the
+list using a list comprehension that applies \texttt{get\_ssd}. *
+Returns the sum of squared deviations.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{134}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{get\PYZus{}mean} \PY{o}{=} \PY{k}{lambda} \PY{n}{x}\PY{p}{:} \PY{n+nb}{sum}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{o}{/}\PY{n+nb}{len}\PY{p}{(}\PY{n}{x}\PY{p}{)}
+\PY{n}{get\PYZus{}ssd} \PY{o}{=} \PY{k}{lambda} \PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{:} \PY{p}{(}\PY{n}{x} \PY{o}{\PYZhy{}} \PY{n}{y}\PY{p}{)}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2}
+\PY{k}{def} \PY{n+nf}{get\PYZus{}sum\PYZus{}sq\PYZus{}err}\PY{p}{(}\PY{n}{numlist}\PY{p}{)}\PY{p}{:}
+    \PY{n}{mean} \PY{o}{=} \PY{n}{get\PYZus{}mean}\PY{p}{(}\PY{n}{numlist}\PY{p}{)}
+    \PY{k}{return} \PY{p}{[}\PY{n}{get\PYZus{}ssd}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{mean}\PY{p}{)} \PY{k}{for} \PY{n}{x} \PY{o+ow}{in} \PY{n}{numlist}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{task-10}{%
+\subsection{Task 10}\label{task-10}}
+
+(1 PT)
+
+Call \texttt{sum\_sq\_err()} passing \texttt{ffmc} as the list and print
+the result.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{136}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{get\PYZus{}sum\PYZus{}sq\PYZus{}err}\PY{p}{(}\PY{n}{ffmc}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{136}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+[19.7551878678114,
+ 0.0019963784517678914,
+ 0.0019963784517678914,
+ 1.113698506111859,
+ 1.8081665912171285,
+ 2.7400814848355264,
+ 2.7400814848355264,
+ 0.7315708465372919,
+ 0.12625169760088936,
+ 3.442209144410097,
+ 3.442209144410097,
+ 4.645400633771926,
+ 736.8336985060987,
+ 0.06518786781361177,
+ 5.086464463559245,
+ 7.050719782708326,
+ 1.113698506111859,
+ 33.001358080576715,
+ 2.0871027614298323,
+ 18.876251697598732,
+ 0.12625169760088936,
+ 1.3347623358991267,
+ 13.361358080581125,
+ 0.19774105930264288,
+ 8.152847442282901,
+ 0.5705070167500199,
+ 3.0811453146228365,
+ 0.06518786781361177,
+ 7.591783612495653,
+ 8.152847442282901,
+ 13.361358080581125,
+ 4.180719782706181,
+ 4.180719782706181,
+ 1.113698506111859,
+ 1.3347623358991267,
+ 0.11880488908992785,
+ 0.0019963784517678914,
+ 0.4156133997280844,
+ 0.0019963784517678914,
+ 6.475400633769784,
+ 124.20391127206364,
+ 0.19774105930264288,
+ 17.266677229517526,
+ 3.442209144410097,
+ 0.29667722951537107,
+ 13.361358080581125,
+ 0.06518786781361177,
+ 12.640294250793886,
+ 11.865826165684211,
+ 9.270081484833387,
+ 5.086464463559245,
+ 0.19774105930264288,
+ 2.117953825260958,
+ 2.117953825260958,
+ 1.113698506111859,
+ 5.086464463559245,
+ 0.11880488908992785,
+ 3.823272974197355,
+ 44.15178361249126,
+ 16.359443186960593,
+ 1.8081665912171285,
+ 1.8081665912171285,
+ 5.547528293346499,
+ 0.19774105930264288,
+ 0.2073155273881647,
+ 1.113698506111859,
+ 3.0811453146228365,
+ 3.0811453146228365,
+ 3.0811453146228365,
+ 1.113698506111859,
+ 0.3083793571754535,
+ 13.361358080581125,
+ 1.113698506111859,
+ 3.402847442280729,
+ 7.050719782708326,
+ 41.53391127206578,
+ 16.359443186960593,
+ 9.270081484833387,
+ 0.29667722951537107,
+ 0.12625169760088936,
+ 0.5705070167500199,
+ 0.19774105930264288,
+ 17.266677229517526,
+ 2.117953825260958,
+ 1.113698506111859,
+ 5.086464463559245,
+ 5.086464463559245,
+ 5.086464463559245,
+ 8.152847442282901,
+ 1.113698506111859,
+ 0.19774105930264288,
+ 1.113698506111859,
+ 2.7400814848355264,
+ 0.5705070167500199,
+ 0.2073155273881647,
+ 0.8924219103662375,
+ 45.4907197827039,
+ 468.49220914439917,
+ 0.5705070167500199,
+ 0.5705070167500199,
+ 0.5705070167500199,
+ 3.402847442280729,
+ 17.266677229517526,
+ 3.442209144410097,
+ 73.01157084653302,
+ 22.51199637844953,
+ 0.5705070167500199,
+ 0.19774105930264288,
+ 3.442209144410097,
+ 4.180719782706181,
+ 22.51199637844953,
+ 1.113698506111859,
+ 0.8924219103662375,
+ 1.3347623358991267,
+ 6.475400633769784,
+ 6.475400633769784,
+ 1.113698506111859,
+ 1.113698506111859,
+ 0.29667722951537107,
+ 5.547528293346499,
+ 0.7315708465372919,
+ 0.7315708465372919,
+ 3.0811453146228365,
+ 38.99603893164031,
+ 13.361358080581125,
+ 3.823272974197355,
+ 9.270081484833387,
+ 8.152847442282901,
+ 0.5705070167500199,
+ 3.823272974197355,
+ 503.7636985061008,
+ 11.865826165684211,
+ 1.8081665912171285,
+ 9.33497510185748,
+ 6.475400633769784,
+ 8.152847442282901,
+ 3.0811453146228365,
+ 0.06518786781361177,
+ 23.470932548662333,
+ 0.12625169760088936,
+ 0.06518786781361177,
+ 23.57412403802851,
+ 0.29667722951537107,
+ 0.4156133997280844,
+ 23.57412403802851,
+ 20.750932548666697,
+ 0.29667722951537107,
+ 38.99603893164031,
+ 17.266677229517526,
+ 9.33497510185748,
+ 3.442209144410097,
+ 0.29667722951537107,
+ 0.29667722951537107,
+ 13.361358080581125,
+ 7.591783612495653,
+ 17.266677229517526,
+ 7.591783612495653,
+ 2.117953825260958,
+ 2.117953825260958,
+ 3.0811453146228365,
+ 0.29667722951537107,
+ 20.750932548666697,
+ 0.0019963784517678914,
+ 3.442209144410097,
+ 0.8924219103662375,
+ 33.001358080576715,
+ 2.117953825260958,
+ 28.679443186964914,
+ 0.3083793571754535,
+ 20.750932548666697,
+ 5.086464463559245,
+ 25.4488048890878,
+ 0.5705070167500199,
+ 0.06518786781361177,
+ 0.19774105930264288,
+ 0.19774105930264288,
+ 83.62518786780925,
+ 0.19774105930264288,
+ 0.29667722951537107,
+ 3.402847442280729,
+ 3.0811453146228365,
+ 33.001358080576715,
+ 14.78157084653513,
+ 1.113698506111859,
+ 10.59710276143206,
+ 0.12625169760088936,
+ 1.8081665912171285,
+ 0.06518786781361177,
+ 0.024124038026327493,
+ 0.0030602082390481945,
+ 0.3083793571754535,
+ 20.750932548666697,
+ 17.266677229517526,
+ 5.086464463559245,
+ 17.266677229517526,
+ 10.59710276143206,
+ 83.62518786780925,
+ 5.086464463559245,
+ 0.12625169760088936,
+ 736.8336985060987,
+ 0.12625169760088936,
+ 0.29667722951537107,
+ 45.4907197827039,
+ 0.5705070167500199,
+ 0.0019963784517678914,
+ 5.086464463559245,
+ 8.152847442282901,
+ 0.12625169760088936,
+ 3.0811453146228365,
+ 9.33497510185748,
+ 0.0019963784517678914,
+ 8.152847442282901,
+ 13.361358080581125,
+ 9.270081484833387,
+ 1.113698506111859,
+ 1.113698506111859,
+ 3.0811453146228365,
+ 4.180719782706181,
+ 5.086464463559245,
+ 0.29667722951537107,
+ 0.19774105930264288,
+ 7.050719782708326,
+ 9.270081484833387,
+ 5.497528293344329,
+ 0.29667722951537107,
+ 8.152847442282901,
+ 1.113698506111859,
+ 2.4190176550482643,
+ 8.152847442282901,
+ 2.4190176550482643,
+ 5.086464463559245,
+ 8.152847442282901,
+ 0.12625169760088936,
+ 38.99603893164031,
+ 3.442209144410097,
+ 0.5705070167500199,
+ 3.442209144410097,
+ 0.12625169760088936,
+ 3.442209144410097,
+ 76.46944318695826,
+ 6.994336803982474,
+ 58.44114531461845,
+ 12.640294250793886,
+ 1.3347623358991267,
+ 1.3347623358991267,
+ 1.3347623358991267,
+ 1.3347623358991267,
+ 2.4190176550482643,
+ 6.028592123133752,
+ 6.028592123133752,
+ 6.028592123133752,
+ 6.028592123133752,
+ 6.028592123133752,
+ 1.575826165686428,
+ 0.9126346763245615,
+ 9.889017655046072,
+ 12.640294250793886,
+ 12.640294250793886,
+ 1.3347623358991267,
+ 1.3347623358991267,
+ 8.733911272070149,
+ 0.9126346763245615,
+ 0.9126346763245615,
+ 0.2073155273881647,
+ 13.361358080581125,
+ 9.33497510185748,
+ 13.361358080581125,
+ 2.117953825260958,
+ 2.117953825260958,
+ 2.117953825260958,
+ 2.117953825260958,
+ 2.117953825260958,
+ 2.117953825260958,
+ 38.99603893164031,
+ 44.15178361249126,
+ 36.53816659121501,
+ 27.506677229513123,
+ 27.506677229513123,
+ 27.506677229513123,
+ 27.506677229513123,
+ 35.339230421002185,
+ 27.506677229513123,
+ 33.001358080576715,
+ 14.022634676322346,
+ 29.64454956993859,
+ 10.59710276143206,
+ 0.3083793571754535,
+ 0.9126346763245615,
+ 0.9126346763245615,
+ 0.9126346763245615,
+ 0.9126346763245615,
+ 0.9126346763245615,
+ 0.9126346763245615,
+ 6.028592123133752,
+ 2.7400814848355264,
+ 6.028592123133752,
+ 0.05986871887720361,
+ 0.05986871887720361,
+ 0.3083793571754535,
+ 1387.1662516975834,
+ 0.05986871887720361,
+ 0.05986871887720361,
+ 0.2073155273881647,
+ 0.2073155273881647,
+ 30.743485740151403,
+ 1.0913580805789742,
+ 1.0913580805789742,
+ 1.0913580805789742,
+ 3.0811453146228365,
+ 3.0811453146228365,
+ 3.0811453146228365,
+ 3.0811453146228365,
+ 1619.6343368039652,
+ 3.823272974197355,
+ 3.823272974197355,
+ 0.3083793571754535,
+ 3.0811453146228365,
+ 3.0811453146228365,
+ 4.645400633771926,
+ 4.645400633771926,
+ 4.645400633771926,
+ 4.645400633771926,
+ 4.645400633771926,
+ 0.0030602082390481945,
+ 6.475400633769784,
+ 2.4190176550482643,
+ 2.4190176550482643,
+ 2.4190176550482643,
+ 2.4190176550482643,
+ 2.4190176550482643,
+ 2.4190176550482643,
+ 0.3083793571754535,
+ 0.3083793571754535,
+ 2.117953825260958,
+ 0.9126346763245615,
+ 0.9126346763245615,
+ 0.9126346763245615,
+ 0.9126346763245615,
+ 0.9126346763245615,
+ 0.9126346763245615,
+ 0.9126346763245615,
+ 1.575826165686428,
+ 0.7315708465372919,
+ 0.7315708465372919,
+ 0.7315708465372919,
+ 0.7315708465372919,
+ 0.7315708465372919,
+ 2.117953825260958,
+ 2.117953825260958,
+ 2.117953825260958,
+ 2.117953825260958,
+ 2.117953825260958,
+ 2.117953825260958,
+ 2.117953825260958,
+ 2.117953825260958,
+ 2.117953825260958,
+ 2.117953825260958,
+ 3.442209144410097,
+ 3.442209144410097,
+ 3.442209144410097,
+ 3.442209144410097,
+ 3.442209144410097,
+ 5.976464463557021,
+ 1.575826165686428,
+ 1.575826165686428,
+ 1.575826165686428,
+ 0.2073155273881647,
+ 0.2073155273881647,
+ 0.3083793571754535,
+ 0.12625169760088936,
+ 0.12625169760088936,
+ 1.575826165686428,
+ 1.8368899954736944,
+ 17.266677229517526,
+ 0.11880488908992785,
+ 0.3083793571754535,
+ 2.117953825260958,
+ 9.33497510185748,
+ 0.06518786781361177,
+ 5176.037102761396,
+ 9.33497510185748,
+ 0.0030602082390481945,
+ 20.750932548666697,
+ 0.9126346763245615,
+ 0.9126346763245615,
+ 0.9126346763245615,
+ 0.020932548664486888,
+ 0.06518786781361177,
+ 17.266677229517526,
+ 17.266677229517526,
+ 35.339230421002185,
+ 0.2073155273881647,
+ 0.12625169760088936,
+ 7.591783612495653,
+ 42.83284744227861,
+ 31.86242191036406,
+ 0.020932548664486888,
+ 0.9126346763245615,
+ 9.33497510185748,
+ 7.050719782708326,
+ 7.050719782708326,
+ 0.2073155273881647,
+ 17.266677229517526,
+ 0.0030602082390481945,
+ 7.533272974195163,
+ 15.644549569942942,
+ 12.56476233589699,
+ 35.339230421002185,
+ 0.11880488908992785,
+ 2.7400814848355264,
+ 42.83284744227861,
+ 36.53816659121501,
+ 2.7400814848355264,
+ 9.33497510185748,
+ 8.733911272070149,
+ 17.266677229517526,
+ 4.224336803984669,
+ 7.591783612495653,
+ 1.8368899954736944,
+ 0.9126346763245615,
+ 1.113698506111859,
+ 20.750932548666697,
+ 3.0439112720679793,
+ 0.3083793571754535,
+ 9.33497510185748,
+ 0.9126346763245615,
+ 0.9126346763245615,
+ 2.117953825260958,
+ 17.266677229517526,
+ 0.9126346763245615,
+ 0.8924219103662375,
+ 2.117953825260958,
+ 17.266677229517526,
+ 8.733911272070149,
+ 0.0019963784517678914,
+ 0.024124038026327493,
+ 2.117953825260958,
+ 1.5492304210043872,
+ 9.33497510185748,
+ 0.2073155273881647,
+ 0.11880488908992785,
+ 2.117953825260958,
+ 7.533272974195163,
+ 0.0030602082390481945,
+ 0.11880488908992785,
+ 11.258166591219304,
+ 1.8368899954736944,
+ 7.591783612495653,
+ 0.8924219103662375,
+ 0.9126346763245615,
+ 20.750932548666697,
+ 0.020932548664486888,
+ 0.7315708465372919,
+ 1.5492304210043872,
+ 0.9126346763245615,
+ 15.644549569942942,
+ 0.9126346763245615,
+ 1.113698506111859,
+ 9.33497510185748,
+ 0.9126346763245615,
+ 9.33497510185748,
+ 9.33497510185748,
+ 0.12625169760088936,
+ 241.63710276142348,
+ 241.63710276142348,
+ 124.20391127206364,
+ 11.865826165684211,
+ 0.19774105930264288,
+ 0.42944318696272715,
+ 0.12625169760088936,
+ 0.12625169760088936,
+ 1.0913580805789742,
+ 5.976464463557021,
+ 0.020932548664486888,
+ 5.547528293346499,
+ 9.33497510185748,
+ 8.152847442282901,
+ 9.33497510185748,
+ 9.33497510185748,
+ 2.0871027614298323,
+ 6.5296559529210745,
+ 6.5296559529210745,
+ 18.107741059304878,
+ 18.107741059304878,
+ 18.107741059304878,
+ 18.96880488909211,
+ 19.84986871887934,
+ 19.84986871887934,
+ 19.84986871887934,
+ 19.84986871887934,
+ 19.84986871887934,
+ 26.577315527390326,
+ 27.618379357177695,
+ 27.618379357177695,
+ 28.679443186964914,
+ 30.861570846539507,
+ 30.861570846539507,
+ 29.760507016752133,
+ 29.760507016752133,
+ 29.760507016752133,
+ 29.760507016752133,
+ 29.760507016752133,
+ 29.760507016752133,
+ 14.863485740155706,
+ 14.863485740155706,
+ 0.12625169760088936,
+ 0.12625169760088936,
+ 0.12625169760088936,
+ 0.12625169760088936,
+ 0.12625169760088936,
+ 0.12625169760088936,
+ 81.80625169759662,
+ 81.80625169759662,
+ 81.80625169759662,
+ 81.80625169759662,
+ 14.102421910368468,
+ 124.20391127206364]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{ }{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+
+\end{Verbatim}
+\end{tcolorbox}
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}
